@@ -39,7 +39,7 @@ switch ($method) {
 
         if ($p == $_ENV['getp']) {
             // Retrieve a specific item
-            $item = findItemByUsername($pdo, $u);
+            $item = findItemByToken($pdo, $u);
             if ($item) {
                 http_response_code(200);
                 echo json_encode(['message' => JWT::encode($item , $key, 'HS256')]);
