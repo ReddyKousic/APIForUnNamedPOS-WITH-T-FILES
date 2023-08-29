@@ -1,9 +1,7 @@
 <?php
 require 'vendor/autoload.php';
 require './sec.php';
-
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+require './enc.php';
 
 
 
@@ -34,14 +32,47 @@ $id = isset($uriSegments[3]) ? $uriSegments[3] : null;
 
 switch ($method) {
     case 'GET':
+        // $u = isset($_SERVER['HTTP_U']) ? $_SERVER['HTTP_U'] : '';
+        // $p = isset($_SERVER['HTTP_P']) ? $_SERVER['HTTP_P'] : '';
+
+        // if ($p == $_ENV['getp']) {
+        //     // Retrieve a specific item
+        //     $item = findItemByUsername($pdo, $u);
+        //     if ($item) {
+        //         echo json_encode(['message' => JWT::encode($item , $key, 'HS256')]);
+        //     } else {
+        //         echo json_encode(['message' => 'Item not found'], 404);
+        //     }
+        //     break;
+        // } else {
+        //     echo json_encode(['message' => 'Fuck Youself mf bitch'], 404);
+        // }
+        
         $u = isset($_SERVER['HTTP_U']) ? $_SERVER['HTTP_U'] : '';
         $p = isset($_SERVER['HTTP_P']) ? $_SERVER['HTTP_P'] : '';
 
         if ($p == $_ENV['getp']) {
+            $u = decrypt($u);
             // Retrieve a specific item
-            $item = findItemByUsername($pdo, $u);
+            $item1 = findItemByUsername($pdo, $u);
+            // $chunkSize = 3;
+            // $chunks = array_chunk($item1, $chunkSize);
+
+            // var_dump($chunks[0]);
+            // var_dump($chunks[1]);
+
+            // $s_dump = implode(", ", $chunks[0]);
+
+            // $a_dump = implode(", ", $chunks[1]);
+            // $s_dump = encrypt($s_dump);
+            // $a_dump = encrypt($a_dump);
+
+            // echo("S_DUMP $s_dump");
+            $item2 = implode(", ", $item1);
+
+            $item = encrypt($item2);
             if ($item) {
-                echo json_encode(['message' => JWT::encode($item , $key, 'HS256')]);
+                echo json_encode(['message' => $item]);
             } else {
                 echo json_encode(['message' => 'Item not found'], 404);
             }
@@ -49,7 +80,6 @@ switch ($method) {
         } else {
             echo json_encode(['message' => 'Fuck Youself mf bitch'], 404);
         }
-        
         
 }
 

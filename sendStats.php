@@ -1,7 +1,6 @@
 <?php
 require 'vendor/autoload.php';
 require './sec.php';
-
 require './enc.php';
 
 
@@ -45,7 +44,7 @@ switch ($method) {
 
     case 'POST':
         // Get the Authorization header
-     
+
         // Get the Authorization header using getallheaders()
         $headers = getallheaders();
         $authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
@@ -54,29 +53,47 @@ switch ($method) {
         // Check if the header is present and starts with 'Bearer '
         if ($authHeader && strpos($authHeader, 'Bearer ') === 0) {
             $jwtToken = substr($authHeader, 7); // Remove 'Bearer ' from the header
-         
+
 
             try {
 
                 $decoded = JWT::decode($jwtToken, new Key($key, 'HS256'));
 
                 // Extract data from JWT payload
-                $username = decrypt($decoded->username);
-                $password = decrypt($decoded->password);
-                $datetime = decrypt($decoded->datetime);
                 $sid = decrypt($decoded->sid);
+                $profile = $decoded->profile;
+                $interests = $decoded->interests;
 
-                // Generate random aid
-                $aid = generateRandomString();
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 // Insert data into the database
-                $query = "INSERT INTO users (username, password, datetime, sid, aid) VALUES (:user, :pass, :dt, :sid, :aid)";
+                // $query = "INSERT INTO stats (sid, profile, interests) VALUES (:sid, :profile, :interests)";
+                $query = "INSERT INTO stats (sid, profile, interests)
+                            VALUES (:sid, :profile, :interests)
+                            ON DUPLICATE KEY UPDATE
+                                sid = VALUES(sid),
+                                profile = VALUES(profile),
+                                interests = VALUES(interests);
+                        ";
+
+
                 $statement = $pdo->prepare($query);
-                $statement->bindParam(':user', $username, PDO::PARAM_STR);
-                $statement->bindParam(':pass', $password, PDO::PARAM_STR);
-                $statement->bindParam(':dt', $datetime, PDO::PARAM_STR);
                 $statement->bindParam(':sid', $sid, PDO::PARAM_STR);
-                $statement->bindParam(':aid', $aid, PDO::PARAM_STR);
+                $statement->bindParam(':profile', $profile, PDO::PARAM_STR);
+                $statement->bindParam(':interests', $interests, PDO::PARAM_STR);
+
 
                 if ($statement->execute()) {
                     http_response_code(200);
@@ -89,6 +106,7 @@ switch ($method) {
                 http_response_code(400);
 
                 echo json_encode(['message' => ' verification failed']);
+
             }
         } else {
             http_response_code(400);
@@ -96,24 +114,19 @@ switch ($method) {
             echo json_encode(['message' => 'Invalid']);
         }
         break;
-    }
-
-
-
-
-
-function generateRandomString($length = 50)
-{
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $randomString = '';
-
-    for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters[rand(0, strlen($characters) - 1)];
-    }
-
-    return $randomString;
 }
 
+
+// function findItemBySID($pdo, $username)
+// {
+//     $query = "SELECT username, sid, datetime FROM users WHERE username = :u";
+//     $statement = $pdo->prepare($query);
+//     $statement->bindParam(':u', $username, PDO::PARAM_STR);
+//     $statement->execute();
+//     $item = $statement->fetch(PDO::FETCH_ASSOC);
+//     return $item ? $item : null;
 // }
+
+
 
 ?>

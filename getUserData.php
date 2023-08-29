@@ -2,8 +2,14 @@
 require 'vendor/autoload.php';
 require './sec.php';
 
+require './enc.php';
+
+
+
+
+
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+// use Firebase\JWT\Key;
 
 
 
@@ -39,10 +45,14 @@ switch ($method) {
 
         if ($p == $_ENV['getp']) {
             // Retrieve a specific item
-            $item = findItemByUsername($pdo, $u);
+            $item1 = findItemByUsername($pdo, $u);
+            $item2 = implode(", ", $item1);
+            $item = encrypt($item2);
             if ($item) {
                 http_response_code(200);
-                echo json_encode(['message' => JWT::encode($item , $key, 'HS256')]);
+                // echo json_encode(['message' => JWT::encode($item , $key, 'HS256')]);
+                echo json_encode(['message' => $item]);
+
             } else {
               
                 http_response_code(404);
