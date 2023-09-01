@@ -26,6 +26,18 @@ $result = $conn->query($sql);
 <head>
     <title>Joined Table Data</title>
     <style>
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap');
+
+
+        /* body{
+            background-color: #13131378;
+        } */
+        h2 {
+            font-family: 'Nunito', sans-serif;
+
+        }
         table {
             border-collapse: collapse;
             width: 100%;
@@ -35,47 +47,59 @@ $result = $conn->query($sql);
 
         th, td {
             border: 1px solid black;
-            padding: 8px;
+            padding: 4px;
             text-align: left;
+            font-size: 15px;
         }
 
         th {
-            background-color: violet;
+            background-color: #EA1179;
+            font-family: 'Rubik', sans-serif;
 
+
+        }
+        td {
+            font-family: 'Comfortaa', cursive;
+            font-weight: 900;
         }
     </style>
 </head>
 <body>
 
-<h2>Joined Table Data</h2>
+<h2>Administration</h2>
 
 <table>
     <tr>
-        <th>Stats ID</th>
+        <th>Username</th>
+        <th>AID</th>
+        <!-- <th>Stats ID</th>  -->
         <th>SID</th>
         <th>Profile</th>
         <th>Interests</th>
         <th>User ID</th>
-        <th>Username</th>
-        <th>Password</th>
-        <th>AID</th>
-        <th>User SID</th>
+        
+        <!-- <th>Password</th> -->
+        
+        <!-- <th>User SID</th> -->
         <th>Datetime</th>
     </tr>
     <?php
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             echo "<tr>";
-            echo "<td>" . $row["stats_id"] . "</td>";
+            echo "<td>" . $row["username"] . "</td>";
+            echo "<td>" . $row["aid"] . "</td>";
+            
             echo "<td>" . $row["sid"] . "</td>";
             echo "<td>" . $row["profile"] . "</td>";
             echo "<td>" . $row["interests"] . "</td>";
             echo "<td>" . $row["user_id"] . "</td>";
-            echo "<td>" . $row["username"] . "</td>";
-            echo "<td>" . $row["password"] . "</td>";
-            echo "<td>" . $row["aid"] . "</td>";
-            echo "<td>" . $row["user_sid"] . "</td>";
+            
+            // echo "<td>" . $row["password"] . "</td>";
+            
+            // echo "<td>" . $row["user_sid"] . "</td>";
             echo "<td>" . $row["datetime"] . "</td>";
+            // echo "<td>" . $row["stats_id"] . "</td>";
             echo "</tr>";
         }
     } else {
